@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -13,7 +14,7 @@ class MyWindow(QMainWindow):
                         ['ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ'],
                         ['ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ']]
 
-
+        self.row_gap = [0, 0, 0.25, 0.75]
         self.btn_list = []
         self.btn_top = 450
         self.cnt = 0
@@ -36,8 +37,9 @@ class MyWindow(QMainWindow):
             for j in range(self.cnt_j):
                 print(self.key_values[i][j])
                 self.btn_row.append(QPushButton(self.key_values[i][j], self))
-                self.btn_row[j].resize(QSize(130, 130))
-                self.btn_row[j].move(260 + (j * 140), self.btn_top + (i * 140))
+                self.btn_row[j].resize(QSize(140, 140))
+                self.btn_row[j].move(260 + (j * 140) + self.row_gap[i]*140, self.btn_top + (i * 140))
+                self.btn_row[j].setFont(QFont('Times', 35))
                 self.btn_row[j].show()
             self.btn_list.append(self.btn_row)
 
