@@ -2,12 +2,19 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from functools import partial
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
         # self.setGeometry(300, 300, 500, 400)
+        self.setWindowTitle('hong!')
+
+        self.text_edit = QTextEdit(self)
+        self.text_edit.move(75, 75)
+        self.text_edit.resize(1750, 300)
+        self.text_edit.setText('hongman')
 
         self.key_values = [['ㅃ', 'ㅉ', 'ㄸ', 'ㄲ', 'ㅆ'],
                         ['ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ'],
@@ -22,10 +29,18 @@ class MyWindow(QMainWindow):
         # self.btn = QPushButton("종료", self)
         # self.btn.resize(150,50)
         # self.btn.move(600, 800)
-        # self.btn.clicked.connect(self.btn_clicked)
+        # self.btn.clicked.connect(lambda: self.buttonClicked(65))
         self.setGeometry(100, 100, 500, 300)
         self.showMaximized()
     
+    def buttonClicked(self, char_ord):
+        txt = self.text_edit.toPlainText()
+
+        txt += chr(char_ord)
+
+        self.text_edit.setText(txt)
+
+
     def btn_clicked(self):
         self.close()
     
@@ -35,10 +50,13 @@ class MyWindow(QMainWindow):
             self.btn_row = []
             self.cnt_j = len(self.key_values[i])
             for j in range(self.cnt_j):
-                print(self.key_values[i][j])
+                # print(self.key_values[i][j])
                 self.btn_row.append(QPushButton(self.key_values[i][j], self))
                 self.btn_row[j].resize(QSize(140, 140))
-                self.btn_row[j].move(260 + (j * 140) + self.row_gap[i]*140, self.btn_top + (i * 140))
+                self.btn_row[j].move(int(260 + (j * 140) + self.row_gap[i]*140), int(self.btn_top + (i * 140)))
+                ham = ord(self.key_values[i][j])
+                self.btn_row[j].clicked.connect(partial(self.buttonClicked, ham))
+                print(self.key_values[i][j])
                 self.btn_row[j].setFont(QFont('Times', 35))
                 self.btn_row[j].show()
             self.btn_list.append(self.btn_row)
