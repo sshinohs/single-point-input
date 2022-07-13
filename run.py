@@ -130,17 +130,20 @@ class MyWindow(QMainWindow):
 
         self.text_edit = QTextEdit(self)
         self.text_edit.move(75, 75)
-        self.text_edit.resize(1750, 300)
+        self.text_edit.resize(1750, 200)
         self.text_edit.setText('')
 
         self.key_values = [['ㅃ', 'ㅉ', 'ㄸ', 'ㄲ', 'ㅆ'],
                         ['ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ'],
                         ['ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ'],
-                        ['ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ']]
-
+                        ['ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ', ',', '.']]
+        
+        # self.space_bar = [' ']
+        self.enter = ['\n']
         self.row_gap = [0, 0, 0.25, 0.75]
         self.btn_list = []
-        self.btn_top = 450
+        self.btn_top = 310
+        self.btn_left = 160
         self.cnt = 0
         self.create_btn()
         # self.btn = QPushButton("종료", self)
@@ -172,13 +175,25 @@ class MyWindow(QMainWindow):
                 # print(self.key_values[i][j])
                 self.btn_row.append(QPushButton(self.key_values[i][j], self))
                 self.btn_row[j].resize(QSize(140, 140))
-                self.btn_row[j].move(int(260 + (j * 140) + self.row_gap[i]*140), int(self.btn_top + (i * 140)))
+                self.btn_row[j].move(int(self.btn_left + (j * 140) + self.row_gap[i]*140), int(self.btn_top + (i * 140)))
                 ham = ord(self.key_values[i][j])
                 self.btn_row[j].clicked.connect(partial(self.buttonClicked, ham))
-                print(self.key_values[i][j])
+                # print(self.key_values[i][j])
                 self.btn_row[j].setFont(QFont('Times', 35))
                 self.btn_row[j].show()
             self.btn_list.append(self.btn_row)
+        self.space_bar = QPushButton(' ', self)
+        self.space_bar.resize(QSize(int(140*6.25), 140))
+        self.space_bar.move(int(self.btn_left + 140*2.25), int(self.btn_top + 140*4))
+        self.space_bar.clicked.connect(partial(self.buttonClicked, ord(' ')))
+        self.space_bar.setFont(QFont('Times', 35))
+        self.space_bar.show()
+        self.space_bar = QPushButton('Enter', self)
+        self.space_bar.resize(QSize(int(140*2), 140))
+        self.space_bar.move(int(self.btn_left + 140*9.25), int(self.btn_top + 140*2))
+        self.space_bar.clicked.connect(partial(self.buttonClicked, ord('\n')))
+        self.space_bar.setFont(QFont('Times', 35))
+        self.space_bar.show()
 
 
 app = QApplication(sys.argv)
