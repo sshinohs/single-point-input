@@ -121,17 +121,30 @@ def text_input_event(text_data, cha):
 
 
 
-class MyWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
 
+
+class MyWindow(QMainWindow):
+    def extractMousePos(self):
+        print(self.mouse_pos)
+        return self.mouse_pos
+
+
+    def __init__(self):
+
+        super().__init__()
         # self.setGeometry(300, 300, 500, 400)
         self.setWindowTitle('hong!')
-
+        self.mouse_pos = [0, 0, 0, 0]
         self.text_edit = QTextEdit(self)
         self.text_edit.move(75, 75)
         self.text_edit.resize(1750, 200)
         self.text_edit.setText('')
+
+        
+
+        self.timer = QTimer(self)
+        self.timer.start(10)
+        self.timer.timeout.connect(self.extractMousePos)
 
         self.key_values = [['ㅃ', 'ㅉ', 'ㄸ', 'ㄲ', 'ㅆ'],
                         ['ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ'],
@@ -146,6 +159,12 @@ class MyWindow(QMainWindow):
         self.btn_left = 160
         self.cnt = 0
         self.create_btn()
+
+        self.statusbar = self.statusBar()
+
+        print(self.hasMouseTracking())
+        self.setMouseTracking(True)
+        print(self.hasMouseTracking())
         # self.btn = QPushButton("종료", self)
         # self.btn.resize(150,50)
         # self.btn.move(600, 800)
@@ -153,6 +172,12 @@ class MyWindow(QMainWindow):
         self.setGeometry(100, 100, 500, 300)
         self.showMaximized()
     
+    def mouseMoveEvent(self, event):
+        self.mouse_pos = [event.x(), event.y(), event.globalX(), event.globalY()]
+        mouse_txt = "Mouse 위치 ; x={0}, y={1}, global={2},{3}".format(event.x(), event.y(), event.globalX(), event.globalY())
+        self.statusbar.showMessage(mouse_txt)
+        # print(event.globalX())
+
     def buttonClicked(self, char_ord):
         txt = self.text_edit.toPlainText()
 
@@ -180,6 +205,7 @@ class MyWindow(QMainWindow):
                 self.btn_row[j].clicked.connect(partial(self.buttonClicked, ham))
                 # print(self.key_values[i][j])
                 self.btn_row[j].setFont(QFont('Times', 35))
+                self.btn_row[j].setMouseTracking(True)
                 self.btn_row[j].show()
             self.btn_list.append(self.btn_row)
         self.space_bar = QPushButton(' ', self)
@@ -187,18 +213,18 @@ class MyWindow(QMainWindow):
         self.space_bar.move(int(self.btn_left + 140*2.25), int(self.btn_top + 140*4))
         self.space_bar.clicked.connect(partial(self.buttonClicked, ord(' ')))
         self.space_bar.setFont(QFont('Times', 35))
+        self.space_bar.setMouseTracking(True)
         self.space_bar.show()
-        self.space_bar = QPushButton('Enter', self)
-        self.space_bar.resize(QSize(int(140*2), 140))
-        self.space_bar.move(int(self.btn_left + 140*9.25), int(self.btn_top + 140*2))
-        self.space_bar.clicked.connect(partial(self.buttonClicked, ord('\n')))
-        self.space_bar.setFont(QFont('Times', 35))
-        self.space_bar.show()
+        self.enter_key = QPushButton('Enter', self)
+        self.enter_key.resize(QSize(int(140*2), 140))
+        self.enter_key.move(int(self.btn_left + 140*9.25), int(self.btn_top + 140*2))
+        self.enter_key.clicked.connect(partial(self.buttonClicked, ord('\n')))
+        self.enter_key.setFont(QFont('Times', 35))
+        self.enter_key.setMouseTracking(True)
+        self.enter_key.show()
 
 
 app = QApplication(sys.argv)
 window = MyWindow()
 window.show()
-# button = QPushButton("Button")
-# button.show()
 app.exec_()
