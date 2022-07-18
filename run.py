@@ -1,4 +1,5 @@
 import sys
+import datetime as dt
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -125,16 +126,22 @@ def text_input_event(text_data, cha):
 
 class MyWindow(QMainWindow):
     def extractMousePos(self):
-        print(self.mouse_pos)
-        return self.mouse_pos
+        # print(self.mouse_pos, dt.datetime.now())
+        x = dt.datetime.now()
+        output = [*self.mouse_pos, x.year, x.month, x.day, x.hour, x.minute, x.second, x.microsecond]
+        print(output)
+        if self.record_state:
+            self.f.write(' '.join(output))
+        return output
 
 
     def __init__(self):
-
         super().__init__()
-        # self.setGeometry(300, 300, 500, 400)
         self.setWindowTitle('hong!')
         self.mouse_pos = [0, 0, 0, 0]
+        self.record_state = False
+        self.f = 0
+        self.fn = ''
         self.text_edit = QTextEdit(self)
         self.text_edit.move(75, 75)
         self.text_edit.resize(1750, 200)
@@ -177,6 +184,10 @@ class MyWindow(QMainWindow):
         mouse_txt = "Mouse 위치 ; x={0}, y={1}, global={2},{3}".format(event.x(), event.y(), event.globalX(), event.globalY())
         self.statusbar.showMessage(mouse_txt)
         # print(event.globalX())
+    
+    def buttonClicked_backspace(self):
+        txt = self.text_edit.toPlainText()
+        self.text_edit.setText(txt[:-1])
 
     def buttonClicked(self, char_ord):
         txt = self.text_edit.toPlainText()
@@ -191,6 +202,18 @@ class MyWindow(QMainWindow):
     def btn_clicked(self):
         self.close()
     
+    def add_open(self):
+        FileOpen = QFileDialog.getOpenFileName(self, 'Open file', './')
+        print(FileOpen[0])
+    
+    def add_save(self):
+        FileSave = QFileDialog.getSaveFileName(self, 'Save file', './')
+        print(FileSave)
+        print(FileSave[0])
+        self.fn = FileSave[0]
+        self.f = open(self.fn, 'w')
+        self.record_state = True
+
     def create_btn(self):
         self.cnt_i = len(self.key_values)
         for i in range(self.cnt_i):
@@ -208,6 +231,7 @@ class MyWindow(QMainWindow):
                 self.btn_row[j].setMouseTracking(True)
                 self.btn_row[j].show()
             self.btn_list.append(self.btn_row)
+        
         self.space_bar = QPushButton(' ', self)
         self.space_bar.resize(QSize(int(140*6.25), 140))
         self.space_bar.move(int(self.btn_left + 140*2.25), int(self.btn_top + 140*4))
@@ -215,6 +239,7 @@ class MyWindow(QMainWindow):
         self.space_bar.setFont(QFont('Times', 35))
         self.space_bar.setMouseTracking(True)
         self.space_bar.show()
+
         self.enter_key = QPushButton('Enter', self)
         self.enter_key.resize(QSize(int(140*2), 140))
         self.enter_key.move(int(self.btn_left + 140*9.25), int(self.btn_top + 140*2))
@@ -223,6 +248,34 @@ class MyWindow(QMainWindow):
         self.enter_key.setMouseTracking(True)
         self.enter_key.show()
 
+        self.backspace = QPushButton('Backspace', self)
+        self.backspace.resize(QSize(int(140*2), 140))
+        self.backspace.move(int(self.btn_left + 140*9.25), int(self.btn_top + 140*0))
+        self.backspace.clicked.connect(partial(self.buttonClicked_backspace))
+        self.backspace.setFont(QFont('Times', 35))
+        self.backspace.setMouseTracking(True)
+        self.backspace.show()
+
+        self.open_file = QPushButton('Open File', self)
+        self.open_file.resize(QSize(int(140), 30))
+        self.open_file.move(int(self.btn_left + 140*0), int(25))
+        self.open_file.setFont(QFont('Times', 10))
+        self.open_file.clicked.connect(self.add_open)
+        self.open_file.show()
+
+        self.save_file = QPushButton('Save File', self)
+        self.save_file.resize(QSize(int(140), 30))
+        self.save_file.move(int(self.btn_left + 140*1), int(25))
+        self.save_file.setFont(QFont('Times', 10))
+        self.save_file.clicked.connect(self.add_save)
+        self.save_file.show()
+
+        self.open_file = QPushButton('Open File', self)
+        self.open_file.resize(QSize(int(140), 30))
+        self.open_file.move(int(self.btn_left + 140*0), int(25))
+        self.open_file.setFont(QFont('Times', 10))
+        self.open_file.clicked.connect(self.add_open)
+        self.open_file.show()
 
 app = QApplication(sys.argv)
 window = MyWindow()
